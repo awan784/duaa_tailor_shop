@@ -1,0 +1,85 @@
+
+.select2-container--default .select2-selection--single {
+    height: 40px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border-color: #bbc1c9;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    height: 100%;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: gray;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+}
+/* table style */
+.quantity-group {
+    display: flex;
+    align-items: center;
+    width: 100px;
+    margin: auto
+}
+.quantity-group .quantity-input {
+    text-align: center;
+    width: 50px;
+    margin-right: -1px;
+}
+.quantity-group .input-group-append {
+    display: flex;
+    flex-direction: column;
+    width: 0px;
+}
+#myTable thead tr th:nth-child(1),
+#myTable tbody tr td:nth-child(1){
+    width: 30%;
+}
+#myTable thead tr th:nth-child(4),
+#myTable tbody tr td:nth-child(4),
+#myTable thead tr th:nth-child(2),
+#myTable tbody tr td:nth-child(2){
+    text-align: center;
+    width: 20%;
+}
+#myTable thead tr th:nth-child(5),
+#myTable tbody tr td:nth-child(5),
+#myTable thead tr th:nth-child(3),
+#myTable tbody tr td:nth-child(3){
+    text-align: center;
+    width: 15%;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.sale-cost-card {
+    border: 1px solid #ced4da;
+    padding: 5px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.sale-cost-card .row {
+    background-color: #fff;
+    margin: 0px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #ced4da81;
+    justify-content: space-between;
+}
+.sale-cost-card .row:last-child {
+    border-bottom: 0px;
+}
+.sale-cost-card .row >* {
+    padding: 0px;
+}
+.sale-cost-card input {
+    box-shadow: none;
+    border-radius: 0px;
+    font-weight: 700;
+}
+.sale-cost-card .row > label  {
+    background-color: #f8f9fa;
+    padding: 8px 10px;
+    margin-right: 12px;
+    width: calc(50% - 12px);
+}
