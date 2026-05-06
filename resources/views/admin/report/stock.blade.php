@@ -89,14 +89,16 @@
                                             </form>
                                             </div>
                                         </div>
-                                        <div class="add_button ms-2">
-                                            <a href="{{ route('report.stock.print', request()->query()) }}" target="_blank" class="btn_1">Print</a>
-                                        </div>
+                                        @if (request('started_date') && request('ended_date'))
+                                            <div class="add_button ms-2">
+                                                <a href="{{ route('report.stock.print', request()->query()) }}" target="_blank" class="btn_1">Print</a>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 @if (isset($totalData))
                                 <h4 style="text-align: right;">
-                                 Total Price:{{$totalPurchasePrice}}
+                                 Total Stock Value: {{ number_format($totalPurchasePrice, 2) }}
                                   </h4> 
                                   @endif
                                 <div class="QA_table mb_30">
@@ -109,8 +111,9 @@
                                                 <th scope="col">Product Name</th>
                                                 <th scope="col">Category</th>
                                                 <th scope="col">Unit</th>
-                                                <th scope="col">Quantity</th>
+                                                <th scope="col">Remaining Qty</th>
                                                 <th scope="col">Purchase Price</th>
+                                                <th scope="col">Stock Value</th>
 
 
                                             </tr>
@@ -141,6 +144,7 @@
                                                     <th scope="row">{{$data->unit ? $data->unit->name : ''}}</th>
                                                     <th scope="row">{{$data->remaining_quantity()}}</th>
                                                     <th scope="row">{{$data->purchase_price}}</th>
+                                                    <th scope="row">{{ number_format(((float) $data->remaining_quantity()) * ((float) $data->purchase_price), 2) }}</th>
 
 
                                                 </tr>
@@ -170,25 +174,5 @@
     <!-- TABLE END -->
 @endsection
 @section('js')
-    <script>
-        $(document).ready(function() {
-            $('#printButton').click(function(e) {
-                e.preventDefault(); // Prevent the default anchor behavior
-                
-                // Get URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const startedDate = urlParams.get('started_date');
-                const endedDate = urlParams.get('ended_date');
-                
-                // Construct the print URL
-                let printUrl = "{{ route('report.stock.print') }}";
-                
-                // If start_date and end_date exist, add them to the URL
-                if (startedDate && endedDate) {
-                    printUrl += `?started_date=${startedDate}&ended_date=${endedDate}`;
-                    window.open(printUrl, '_blank');
-                }
-            });
-        });
-    </script>
+    <script></script>
 @endsection

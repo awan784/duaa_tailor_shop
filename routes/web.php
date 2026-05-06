@@ -48,7 +48,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/get-products/{categoryId}/{subCategoryId}', [StockController::class, 'getProducts']);
     Route::get('report/stock', [StockController::class, 'Report'])->name('report.stock');
     Route::get('report/stock/print', [StockController::class, 'ReportPrint'])->name('report.stock.print');
-    Route::get('report/stock', [StockController::class, 'Report'])->name('report.stock');
     //assets
     Route::get('assets', [AssetsController::class, 'index'])->name('assets.index');
     Route::get('assets/create', [AssetsController::class, 'create'])->name('assets.create');

@@ -69,31 +69,34 @@ class StockController extends Controller
         $categories = StockCategory::latest()->get();
         $startDate  = $request->query('started_date');
         $endDate    = $request->query('ended_date');
-        $category   = $request->query('category');
 
-        if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate)->startOfDay();
-            $endDate   = Carbon::parse($endDate)->endOfDay();
-
-            // Base query
-            $query = Stock::whereBetween('created_at', [$startDate, $endDate]);
-
-            // If category is provided, apply filter
-            if (!empty($category)) {
-                $query->where('category_id', $category);
-            }
-
-            $totalData = $query->latest()->get();
-
-            // Multiply purchase_price with quantity
-            $totalPurchasePrice = $totalData->sum(function ($item) {
-                return $item->purchase_price * $item->quantity;
-            });
-
-            return view('admin.report.stock', compact('totalData', 'categories', 'totalPurchasePrice'));
-        } else {
+        if (!($startDate && $endDate)) {
             return view('admin.report.stock', compact('categories'));
         }
+
+        [$totalData, $totalPurchasePrice] = $this->buildStockReport($request);
+        return view('admin.report.stock', compact('totalData', 'categories', 'totalPurchasePrice'));
+    }
+
+    private function buildStockReport(Request $request): array
+    {
+        $startDate = Carbon::parse($request->query('started_date'))->startOfDay();
+        $endDate   = Carbon::parse($request->query('ended_date'))->endOfDay();
+        $category  = $request->query('category');
+
+        $query = Stock::with(['category', 'unit'])->whereBetween('created_at', [$startDate, $endDate]);
+        if (!empty($category)) {
+            $query->where('category_id', $category);
+        }
+
+        $totalData = $query->latest()->get();
+
+        $totalPurchasePrice = $totalData->sum(function ($item) {
+            $remaining = (float) $item->remaining_quantity();
+            return $remaining * (float) $item->purchase_price;
+        });
+
+        return [$totalData, $totalPurchasePrice];
     }
 
 
@@ -101,18 +104,14 @@ class StockController extends Controller
     public function ReportPrint(Request $request)
     {
         $startDate = $request->query('started_date');
-        $endDate = $request->query('ended_date');
-        if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate)->startOfDay();
-            $endDate = Carbon::parse($endDate)->endOfDay();
-            $totalData = Stock::whereBetween('created_at', [$startDate, $endDate])->latest()->get();
+        $endDate   = $request->query('ended_date');
 
-            $totalPurchasePrice = Stock::whereBetween('created_at', [$startDate, $endDate])
-                ->sum('purchase_price');
-            return view('admin.report.stock_report', compact('totalData', 'totalPurchasePrice'));
-        } else {
+        if (!($startDate && $endDate)) {
             return "<script>window.close();</script>";
         }
+
+        [$totalData, $totalPurchasePrice] = $this->buildStockReport($request);
+        return view('admin.report.stock_report', compact('totalData', 'totalPurchasePrice'));
     }
 
     /**
