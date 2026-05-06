@@ -16,9 +16,30 @@ class SaleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $totalData = Sale::orderBy('id', 'desc')->get();
+        $sku = trim((string) $request->query('sku', ''));
+
+        $totalData = Sale::query()
+            ->when($sku !== '', function ($q) use ($sku) {
+                // Primary filter: SKU stored in sales.products JSON (most reliable for this screen)
+                $q->whereRaw(
+                    'JSON_SEARCH(products, "one", ?, NULL, "$[*].sku") IS NOT NULL',
+                    [$sku]
+                );
+
+                // Fallback: if older sales items don't include sku in JSON,
+                // match via product_id by resolving sku to stocks.id
+                $stockId = Stock::where('sku', $sku)->value('id');
+                if ($stockId) {
+                    $q->orWhereRaw(
+                        'JSON_SEARCH(products, "one", ?, NULL, "$[*].product_id") IS NOT NULL',
+                        [(string) $stockId]
+                    );
+                }
+            })
+            ->orderBy('id', 'desc')
+            ->get();
 
         // Manually load users if relationship doesn't work
         $userIds = $totalData->pluck('created_by')->filter()->unique();
@@ -31,7 +52,7 @@ class SaleController extends Controller
             }
         });
 
-        return view('admin.sales.index', compact('totalData'));
+        return view('admin.sales.index', compact('totalData', 'sku'));
     }
 
 

@@ -47,6 +47,23 @@
                               <div class="white_box_tittle list_header">
                                 <h4></h4>
                                 <div class="box_right d-flex lms_block">
+                                  <div class="serach_field_2 me-2">
+                                    <div class="search_inner">
+                                      <form action="{{ route('sales.index') }}" method="GET">
+                                        <div class="search_field">
+                                          <input
+                                            type="text"
+                                            name="sku"
+                                            value="{{ $sku ?? request('sku') }}"
+                                            placeholder="Search by SKU (e.g. DC-12)"
+                                          />
+                                        </div>
+                                        <button type="submit">
+                                          <i class="ti-search"></i>
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </div>
                                   <div class="serach_field_2">
                                     <div class="search_inner">
                                       <form action="#">
@@ -59,6 +76,11 @@
                                       </form>
                                     </div>
                                   </div>
+                                  @if(($sku ?? request('sku')) )
+                                    <div class="add_button ms-2">
+                                      <a href="{{ route('sales.index') }}" class="btn_1">Clear</a>
+                                    </div>
+                                  @endif
                                   <div class="add_button ms-2">
                                     <a
                                       href="{{route('sales.create')}}"
